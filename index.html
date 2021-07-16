@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="fav-icon.svg">
+
+</head>
+
+<body>
+
+  <div class="anzeigefeld">
+
+    <header>Einkaufsliste</header>
+
+
+    <div class="inputarea">
+      <input type="text" placeholder="Neues Lebensmittel hinzufügen">
+      <button><i class="hinzufügen"></i><img src="basket.svg" alt="add" > </button>
+    </div>
+
+
+    <ul class="einkaufsListe">
+    </ul>
+
+
+    <div class="footer">
+      <span>Auf deiner Einkaufliste sind <span class="anzahllebensmittel"></span> Lebensmittel </span>
+      <button ><img src="done.svg" alt="done" > </button>
+    </div>
+
+  </div>
+
+
+
+<script>
+
+
+    const inputBox = document.querySelector(".inputarea input");
+    const addButton = document.querySelector(".inputarea button");
+    const einkaufsListe = document.querySelector(".einkaufsListe");
+    const deleteAllButton = document.querySelector(".footer button");
+
+
+    inputBox.onkeyup = ()=>{
+      let userEnteredValue = inputBox.value;
+      if(userEnteredValue.trim() != 0){
+      addButton.classList.add("active");
+      }else{
+        addButton.classList.remove("active");
+      }
+    }
+
+
+    lebensmittelAnzeige();
+
+
+    addButton.onclick = ()=>{
+      let userEnteredValue = inputBox.value;
+      let getLocalStorageData = localStorage.getItem("Neues Lebensmittel");
+      if(getLocalStorageData == null){
+        listArray = [];
+      }else{
+        listArray = JSON.parse(getLocalStorageData);
+      }
+      listArray.push(userEnteredValue);
+      localStorage.setItem("Neues Lebensmittel", JSON.stringify(listArray));
+      lebensmittelAnzeige();
+      addButton.classList.remove("active");
+    }
+
+
+    function lebensmittelAnzeige(){
+      let getLocalStorageData = localStorage.getItem("Neues Lebensmittel");
+      if(getLocalStorageData == null){
+        listArray = [];
+      }else{
+        listArray = JSON.parse(getLocalStorageData);
+      }
+
+
+      const anzahllebensmittelNumb = document.querySelector(".anzahllebensmittel");
+      anzahllebensmittelNumb.textContent = listArray.length;
+
+
+      if(listArray.length > 0){
+        deleteAllButton.classList.add("active");
+      }else{
+        deleteAllButton.classList.remove("active");
+      }
+      let newLiTag = "";
+      listArray.forEach((element, index) => {
+        newLiTag += `<li>
+          ${element}<span class="icon" onclick="deleteTask(${index})">
+            <i class="hinzufügen"></i></span>
+              </li>`;
+      });
+      einkaufsListe.innerHTML = newLiTag;
+      inputBox.value = "";
+    }
+
+
+    function aufgabeLöschen(index){
+      let getLocalStorageData = localStorage.getItem("Neues Lebensmittel");
+      listArray = JSON.parse(getLocalStorageData);
+      listArray.splice(index, 1);
+      localStorage.setItem("Neues Lebensmittel", JSON.stringify(listArray));
+      lebensmittelAnzeige();
+    }
+
+
+    deleteAllButton.onclick = ()=>{
+      listArray = [];
+      localStorage.setItem("Neues Lebensmittel", JSON.stringify(listArray));
+      lebensmittelAnzeige();
+    }
+
+
+    </script>
+
+
+</body>
+</html>
